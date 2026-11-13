@@ -1,0 +1,132 @@
+/* Base: fontes, tokens claro/escuro, reset, tipografia, botões, topo e rodapé. */
+@font-face{font-family:"Archivo";font-style:normal;font-weight:400 800;font-stretch:62% 125%;font-display:swap;src:url("../fonts/archivo-wdth-wght.woff2") format("woff2")}
+@font-face{font-family:"Public Sans";font-style:normal;font-weight:400 700;font-display:swap;src:url("../fonts/public-sans.woff2") format("woff2")}
+
+:root{
+  --rio:#0E4250; --corr:#2F8A8A; --corr6:#0F6E6E; --sol:#F0A83A; --margem:#EEF2F0;
+  --graf:#17262B; --apoio:#4F6468; --linha:#D3DEDC; --menta:#8FCFC9;
+  --f-tit:"Archivo",Verdana,Arial,sans-serif; --f-txt:"Public Sans","Segoe UI",Arial,sans-serif;
+  --bg:#EEF2F0; --sup:#FFFFFF; --tx:#17262B; --tx2:#4F6468; --tit:#0E4250; --linha2:#D3DEDC;
+  --acento:#0F6E6E; --logo-grupo:#2F8A8A; --logo-poty:#0E4250; --ab-bg:#EEF2F0; --rgb-linha:47,138,138;
+  --moldura:#17262B; --chat-bg:#F4F7F6; --bolha-a:#FFFFFF; --bolha-p:#D7F1F1;
+  --tag-bg:#EDFAFA; --tag-tx:#0F6E6E; --ok-bg:#E8F9EB; --ok-tx:#206B38; --info-bg:#EBF6F9; --info-tx:#25677A; --err-bg:#FFEFEF; --err-tx:#B6322D;
+  --c1:#0F6B98; --c2:#C25430; --c3:#129390; --c4:#E39A1F;
+  --foco:#0F6E6E;
+  color-scheme:light;
+}
+:root[data-tema="escuro"]{
+  --bg:#0A242B; --sup:#0F313A; --tx:#E4EDEB; --tx2:#9DB5B4; --tit:#FFFFFF; --linha2:#22484F;
+  --acento:#8FCFC9; --logo-grupo:#8FCFC9; --logo-poty:#EEF2F0; --ab-bg:#0E4250; --rgb-linha:143,207,201;
+  --moldura:#22484F; --chat-bg:#0A242B; --bolha-a:#0F313A; --bolha-p:#173B45;
+  --tag-bg:#0E4250; --tag-tx:#8FCFC9; --ok-bg:#223D27; --ok-tx:#8FD89E; --info-bg:#173B45; --info-tx:#99CEDF; --err-bg:#542523; --err-tx:#F8A49D;
+  --c1:#3A8FC0; --c2:#CB6443; --c3:#20A09D; --c4:#C8850D;
+  --foco:#8FCFC9;
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+/* --topo: altura do topo fixo. O topo.js mede a real; estes valores são a reserva (sem JS, antes da medida). */
+:root{--topo:68px}
+@media (min-width:720px){:root{--topo:72px}}
+@media (min-width:1000px){:root{--topo:85px}}
+/* o foco e os links internos param abaixo do topo fixo (WCAG 2.4.11) */
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scrollbar-gutter:stable;scroll-padding-top:calc(var(--topo) + 12px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--tx);font:400 1rem/1.55 var(--f-txt);-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color .4s ease,color .4s ease}
+h1,h2,h3,p,ol,ul{margin:0}
+ol,ul{padding:0;list-style:none}
+[hidden]{display:none!important}
+a{color:inherit}
+
+/* botões */
+.b-sol:focus-visible,.b-lin:focus-visible,.tema:focus-visible,.movimento:focus-visible,.menu a:focus-visible,.rod a:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+.b-sol{cursor:pointer;display:inline-flex;align-items:center;gap:9px;min-height:50px;padding:0 22px;border-radius:999px;background:var(--sol);color:#0E4250;font:750 1rem/1 var(--f-tit);font-stretch:106%;text-decoration:none;transition:background-color .15s ease}
+.b-sol:hover{background:#F4B85B}
+.b-sol svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.b-lin{appearance:none;background:none;border:0;cursor:pointer;display:inline-flex;align-items:center;min-height:50px;padding:0 20px;border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--linha2);color:var(--tit);font:700 1rem/1 var(--f-tit);font-stretch:106%;text-decoration:none;transition:box-shadow .15s ease}
+.b-lin:hover{box-shadow:inset 0 0 0 1.5px var(--acento)}
+
+/* logo (palavra) */
+.marca{display:block;width:100%;height:auto;overflow:visible}
+.marca .g-grupo{stroke:var(--logo-grupo)}
+.marca .perna{fill:var(--logo-grupo)}
+.marca .g-poty{stroke:var(--logo-poty)}
+.marca .y1{stroke:#F0A83A}
+
+/* topo */
+.s-topo{position:sticky;top:0;z-index:8;display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--bg);background:color-mix(in srgb,var(--bg) 88%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.s-topo .logo{display:block;width:108px;flex:none}
+.menu{display:none}
+.s-topo .acoes{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tema{appearance:none;border:0;background:none;padding:0;font:inherit;cursor:pointer;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--linha2);color:var(--tit)}
+.tema svg,.movimento svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.movimento{appearance:none;border:0;background:none;padding:0;font:inherit;cursor:pointer;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--linha2);color:var(--tit)}
+.movimento .toca-i{display:none}
+.movimento[aria-pressed="true"] .toca-i{display:block}
+.movimento[aria-pressed="true"] .pausa-i{display:none}
+html[data-movimento="parado"] *,html[data-movimento="parado"] *::before,html[data-movimento="parado"] *::after{animation-play-state:paused!important}
+@media (prefers-reduced-motion:reduce){.movimento{display:none}}
+@media (max-width:359px){.s-topo{padding:14px 14px;gap:8px}.s-topo .logo{width:92px}.s-topo .acoes{gap:6px}}
+.tema .sol-i{display:none}
+[data-tema="escuro"] .tema .sol-i{display:block}
+[data-tema="escuro"] .tema .lua-i{display:none}
+.s-topo .b-sol{min-height:40px;padding:0 14px;font-size:.86rem}
+.s-topo .b-sol svg{width:16px;height:16px}
+
+/* rodapé */
+.rod{padding:28px 20px 36px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;font-size:.85rem;color:var(--tx2);background:var(--bg)}
+.rod .logo{display:block;width:120px}
+.b-txt{appearance:none;background:none;border:0;padding:0;margin:0;font:inherit;color:inherit;text-decoration:underline;cursor:pointer}
+.b-txt:hover{color:var(--acento)}
+.b-txt:focus-visible{outline:3px solid var(--foco);outline-offset:2px;border-radius:4px}
+
+/* aviso de cookies: faixa baixa, sem travar a página; fica sob a abertura (z-index 50) */
+.cookies{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 18px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:var(--sup);color:var(--tx);border-top:1px solid var(--linha2);font-size:.88rem;line-height:1.4;transition:background-color .4s ease,color .4s ease}
+.cookies:focus{outline:none}
+.cookies p{flex:1 1 240px;max-width:44rem}
+.cookies a{color:var(--acento);font-weight:600}
+.cookies a:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+.cookies .ck-bts{display:flex;gap:10px}
+.cookies .b-lin{min-height:44px;padding:0 20px}
+
+@media (min-width:720px){
+  .s-topo{padding:16px 40px}
+}
+@media (min-width:1000px){
+  .s-topo{padding:18px 56px}
+  .s-topo .logo{width:128px}
+  .menu{display:flex;gap:26px;margin-left:40px}
+  .menu a{color:var(--tx);text-decoration:none;font:600 .92rem/1 var(--f-txt)}
+  .menu a:hover{color:var(--acento)}
+}
+
+/* página de privacidade */
+.priv{max-width:46rem;margin:0 auto;padding:36px 20px 56px;display:flex;flex-direction:column;gap:12px}
+.priv .rot-priv{font:650 .92rem/1 var(--f-txt);color:var(--acento)}
+.priv h1{font:800 clamp(1.9rem,6vw,2.8rem)/1.08 var(--f-tit);font-stretch:108%;letter-spacing:-.014em;color:var(--tit)}
+.priv .atual{color:var(--tx2);font-size:.9rem}
+.priv h2{font:750 1.2rem/1.25 var(--f-tit);font-stretch:104%;color:var(--tit);margin-top:18px}
+.priv ul{list-style:disc;padding-left:1.3em;display:grid;gap:6px}
+.priv a{color:var(--acento)}
+.priv a:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+.priv .b-lin{margin-top:6px}
+
+/* abertura: só existe com html.com-abertura (primeira visita da sessão, sem reduzir movimento) */
+.abertura{display:none}
+/* o fundo do html acompanha a camada: com a calha da barra de rolagem reservada, a faixa da calha não destoa */
+html.com-abertura{overflow:hidden;background:var(--ab-bg)}
+/* sem transição de cor na camada: num carregamento lento (WebKit), ela chegou a nascer transparente e clarear em 0,4 s.
+   O botão de tema fica por baixo da camada, então a cor não muda enquanto ela está na tela. */
+html.com-abertura .abertura{display:block;position:fixed;inset:0;z-index:50;background:var(--ab-bg)}
+.abertura .borda{position:absolute;left:0;top:calc(100% - 1px);width:100%;height:80px;display:block}
+.abertura .borda path{fill:var(--ab-bg)}
+.ab-in{position:absolute;inset:0;overflow:hidden;display:grid;place-items:center}
+.arte{position:relative;width:min(72%,460px)}
+@media (min-width:720px){.arte{width:min(40%,500px)}}
+/* a camada nasce como o primeiro quadro da animação: traços sem desenhar, perna e assinatura apagadas */
+.abertura .l{stroke-dasharray:1 2;stroke-dashoffset:1}
+.abertura .perna,.abertura .assin{opacity:0}
+.assin{margin:0;position:absolute;left:-20%;right:-20%;top:calc(100% + 20px);text-align:center;font:600 1.05rem/1.2 var(--f-txt);letter-spacing:.02em;color:var(--tx2)}
+.pontos{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pular{all:unset;cursor:pointer;position:absolute;right:16px;top:16px;z-index:2;padding:8px 14px;border-radius:999px;border:1px solid var(--linha2);color:var(--tx2);font:600 .82rem/1 var(--f-txt)}
+.pular:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
