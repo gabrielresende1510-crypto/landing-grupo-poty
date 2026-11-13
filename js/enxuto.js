@@ -16,7 +16,7 @@ export function iniciarEnxuto() {
     d.querySelector(".d-corpo").inert = CELULAR.matches && !aberta;
   };
 
-  // As dobras abertas ficam anotadas no histórico, como os serviços (M3). Ao voltar, a dobra já nasce
+  // As dobras abertas ficam anotadas no histórico (M3). Ao voltar, a dobra já nasce
   // aberta junto com a classe enx, então não há animação de abrir.
   const CHAVE = "poty-dobras";
   const salvas = retomarDoHistorico(CHAVE);

@@ -16,24 +16,27 @@
 .hero .lead{font-size:clamp(1.02rem,2.6vw,1.2rem);line-height:1.58;color:var(--tx2);max-width:36em}
 .bts{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
 .micro{font-size:.88rem;line-height:1.5;color:var(--tx2);max-width:34em}
-/* a seta do "Ver o que fazemos" balança de leve (modelo v9) até o clique; parada com movimento reduzido.
+/* a seta do "Ver o que fazemos" balança de leve (modelo v9) até a pessoa chegar aos serviços; parada com movimento reduzido.
    O botão "Pausar animações" também a para (regra do data-movimento no base.css). */
 .b-lin .seta{width:18px;height:18px;margin-left:6px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:boia 2.4s ease-in-out infinite}
 @keyframes boia{0%,100%{transform:translateY(0)}50%{transform:translateY(3px)}}
-.js body.aberto .b-lin .seta{animation:none}
+.js body.hub-visto .b-lin .seta{animation:none}
 @media (prefers-reduced-motion:reduce){.b-lin .seta{animation:none}}
 
 @media (min-width:1000px){
   .hero{padding:40px 56px 130px}
 }
 
-/* Sem JavaScript tudo aparece. Só com a classe js no <html> os serviços ficam escondidos até serem abertos (tarefas 6 e 7). */
-.js .revela,.js .servico{display:none}
-/* Sem JavaScript, nada que não funcione: "Abrir os quatro" e o teste de 1 minuto inteiro, com o link do menu para ele
+/* Página contínua (13/nov/2026): todas as seções aparecem rolando, com ou sem JavaScript.
+   Sem JavaScript, só o teste de 1 minuto sai, com o link do menu para ele
    (sem o teste, a seção seria só uma promessa; o fechamento logo abaixo já traz a ANÁLISE). */
-html:not(.js) #ver-tudo,html:not(.js) #s-teste,html:not(.js) .menu a[href="#s-teste"]{display:none}
-/* "Ver o que fazemos" põe .aberto no body; cada serviço aparece com .aberta. */
-.js body.aberto .revela,.js .servico.aberta{display:flex}
+html:not(.js) #s-teste,html:not(.js) .menu a[href="#s-teste"]{display:none}
+/* As seções de serviço já ficam na página antes de a pessoa chegar a elas. O que espera a entrada fora do lugar
+   (os posts dos criativos, até 110 px para o lado) não pode alargar a página no celular. clip não cria rolagem. */
+.servico{overflow-x:clip}
+@supports not (overflow-x:clip){.servico{overflow-x:hidden}} /* Safari antes do 16 */
+/* Na impressão nada espera a entrada: cartões e posts saem no lugar, mesmo sem a pessoa ter rolado até eles. */
+@media print{.js .sv,.js .cena .post{opacity:1!important;transform:none!important;transition:none!important}}
 
 /* Dobras: no computador (e sem a regra do celular enxuto) o corpo aparece sempre; o botão só existe no celular. */
 .dobra,.dobra > .d-corpo,.d-in{display:contents}
@@ -66,6 +69,8 @@ html:not(.js) #ver-tudo,html:not(.js) #s-teste,html:not(.js) .menu a[href="#s-te
 .pill{margin-left:auto;padding:4px 8px;border-radius:999px;font:650 .64rem/1.2 var(--f-txt);white-space:nowrap}
 .pill.ruim{background:var(--err-bg);color:var(--err-tx)}
 .pill.bom{background:var(--ok-bg);color:var(--ok-tx)}
+/* escondida, mas com o lugar guardado: a cena não muda de altura (noite.js, etiqueta()) */
+.pill.vazia{visibility:hidden}
 .n-chat{height:320px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;padding:10px;overflow:hidden}
 .n-res{min-height:50px;padding:10px;border-top:1px solid var(--linha2);background:var(--sup);display:flex;align-items:center;justify-content:center;text-align:center}
 .msg{max-width:94%;padding:7px 9px 4px;border-radius:12px;font-size:.7rem;line-height:1.4;color:var(--tx)}
@@ -176,8 +181,9 @@ html:not(.js) #ver-tudo,html:not(.js) #s-teste,html:not(.js) .menu a[href="#s-te
 .ramos circle{fill:#F0A83A;opacity:0}
 .sv{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:flex;flex-direction:column;gap:7px;padding:16px;border-radius:18px;box-shadow:inset 0 0 0 1px var(--linha2);background:var(--sup);text-align:left;transition:opacity .5s ease,transform .6s cubic-bezier(.22,1,.36,1),box-shadow .2s ease,background-color .4s ease}
 .js .sv:not(.vivo){opacity:0;transform:translateY(12px)}
+/* Quem chega pelo teclado não espera o braço: com o foco na grade, os cartões aparecem (WCAG 2.4.7). */
+.js .servicos4:focus-within .sv{opacity:1;transform:none}
 .sv:hover{box-shadow:inset 0 0 0 1.5px var(--acento)}
-.sv[aria-expanded="true"]{box-shadow:inset 0 0 0 2px var(--acento)}
 .sv:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
 .sv .ic{width:42px;height:42px;border-radius:12px;background:var(--tag-bg);color:var(--tag-tx);display:grid;place-items:center}
 .sv .ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -185,9 +191,8 @@ html:not(.js) #ver-tudo,html:not(.js) #s-teste,html:not(.js) .menu a[href="#s-te
 .sv > span:not(.ic){font-size:.9rem;line-height:1.45;color:var(--tx2)}
 .sv em{margin-top:4px;font-style:normal;font:650 .86rem/1 var(--f-txt);color:var(--acento);display:inline-flex;align-items:center;gap:6px}
 .sv em svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s ease}
-.sv[aria-expanded="true"] em svg{transform:rotate(180deg)}
-.ver-tudo{margin-top:20px}
-.fechar-sv{margin-top:34px}
+/* o cartão leva para baixo, até o serviço: ao passar o mouse, a seta desce um pouco */
+.sv:hover em svg{transform:translateY(2px)}
 @media (min-width:900px){
   .servicos4{--g:110px;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;padding-left:0}
   .sv{padding:20px 18px;min-height:224px}
@@ -228,6 +233,9 @@ html:not(.js) #ver-tudo,html:not(.js) #s-teste,html:not(.js) .menu a[href="#s-te
   --m-bg:#FBF6F7; --m-tx:#3D2730; --m-tx2:#6E5560; --m-ac:#A85C78; --m-ac2:#7A3E56; --m-soft:#F2DDE4; --m-font:"Fraunces",Georgia,serif; --m-body:"Public Sans",Arial,sans-serif;
   position:relative;width:260px;height:530px;border-radius:36px;border:9px solid var(--moldura);overflow:hidden;background:var(--m-bg);transition:border-color .4s ease,background-color .4s ease}
 .lp-fone[data-tipo="odonto"]{--m-bg:#F3FAFD; --m-tx:#0F2F45; --m-tx2:#4A6378; --m-ac:#1673B5; --m-ac2:#0E5A8F; --m-soft:#DCEFFA; --m-font:"Nunito",Arial,sans-serif; --m-body:"Nunito",Arial,sans-serif}
+/* Até chegar perto da tela (exemplos.js põe .perto a 600 px dela), o celular usa fontes de reserva: assim a Fraunces
+   e a Nunito não entram na carga da página, que é contínua e já traz o exemplo desde o começo. */
+.js .lp-fone:not(.perto){--m-font:Georgia,serif;--m-body:"Public Sans",Arial,sans-serif}
 .lp-fone[data-tipo="medica"]{--m-bg:#F7FAF9; --m-tx:#18332B; --m-tx2:#4C6A61; --m-ac:#23765D; --m-ac2:#185A47; --m-soft:#DCEEE7; --m-font:"Archivo",Arial,sans-serif; --m-body:"Public Sans",Arial,sans-serif}
 .lp-fone::before{content:"";position:absolute;top:7px;left:50%;width:74px;height:20px;margin-left:-37px;border-radius:12px;background:var(--moldura);z-index:6;transition:background-color .4s ease}
 .lp-tela{position:absolute;inset:0;overflow:hidden;transition:opacity .3s ease}

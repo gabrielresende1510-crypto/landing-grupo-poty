@@ -54,6 +54,7 @@ setTimeout(function(){if(!d.dataset.abertura&&d.classList.contains("com-abertura
 <link rel="modulepreload" href="js/criativos.js">
 <link rel="modulepreload" href="js/teste.js">
 <link rel="modulepreload" href="js/enxuto.js">
+<link rel="modulepreload" href="js/rolagem.js">
 <link rel="modulepreload" href="js/movimento.js">
 <link rel="modulepreload" href="js/consentimento.js">
 </head>
@@ -100,18 +101,17 @@ setTimeout(function(){if(!d.dataset.abertura&&d.classList.contains("com-abertura
   </div>
 </section>
 
-  <section class="sec hub revela" id="s-hub">
+  <section class="sec hub" id="s-hub">
     <p class="rot"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg>O que fazemos</p>
     <h2>Escolha por onde começar.</h2>
     <p class="lead">Toque num serviço para ver como ele funciona na sua clínica.</p>
     <div class="servicos4" id="servicos4">
       <svg class="ramos" id="ramos" aria-hidden="true"></svg>
-      <button type="button" class="sv" data-alvo="s-crm" aria-controls="s-crm"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></span><b data-chave="atendenteIA">CRM e atendente com IA</b><b data-chave-off="atendenteIA" hidden>CRM com WhatsApp</b><span data-chave="atendenteIA">Responde o paciente, marca na agenda e mostra os números da clínica.</span><span data-chave-off="atendenteIA" hidden>Organiza as conversas do WhatsApp e mostra os números da clínica.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></button>
-      <button type="button" class="sv" data-alvo="s-video" aria-controls="s-video"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></span><b>Vídeo com roteiro</b><span>Gravado na sua clínica, com roteiro, direção e edição.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></button>
-      <button type="button" class="sv" data-alvo="s-lp" aria-controls="s-lp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span><b>Landing page</b><span>Uma página com a cara da clínica, que leva direto ao WhatsApp.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></button>
-      <button type="button" class="sv" data-alvo="s-cr" aria-controls="s-cr"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></span><b>Criativos para o Instagram</b><span>Posts e capas no mesmo padrão, para o perfil passar confiança.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></button>
+      <a class="sv" href="#s-crm" data-alvo="s-crm"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg></span><b data-chave="atendenteIA">CRM e atendente com IA</b><b data-chave-off="atendenteIA" hidden>CRM com WhatsApp</b><span data-chave="atendenteIA">Responde o paciente, marca na agenda e mostra os números da clínica.</span><span data-chave-off="atendenteIA" hidden>Organiza as conversas do WhatsApp e mostra os números da clínica.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></a>
+      <a class="sv" href="#s-video" data-alvo="s-video"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3"/></svg></span><b>Vídeo com roteiro</b><span>Gravado na sua clínica, com roteiro, direção e edição.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></a>
+      <a class="sv" href="#s-lp" data-alvo="s-lp"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg></span><b>Landing page</b><span>Uma página com a cara da clínica, que leva direto ao WhatsApp.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></a>
+      <a class="sv" href="#s-cr" data-alvo="s-cr"><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/></svg></span><b>Criativos para o Instagram</b><span>Posts e capas no mesmo padrão, para o perfil passar confiança.</span><em>Ver como funciona <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></em></a>
     </div>
-    <button type="button" class="b-lin ver-tudo" id="ver-tudo">Abrir os quatro</button>
   </section>
 
   <section class="sec alt servico" id="s-crm">
@@ -322,7 +322,7 @@ setTimeout(function(){if(!d.dataset.abertura&&d.classList.contains("com-abertura
     </div>
   </section>
 
-  <section class="sec alt revela" id="s-teste">
+  <section class="sec alt" id="s-teste">
     <p class="rot"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Teste de 1 minuto</p>
     <h2>A sua clínica perde pacientes sem perceber?</h2>
     <p class="lead">Sete perguntas de sim ou não sobre a sua clínica. No fim, você vê onde vale olhar primeiro.</p>
@@ -344,7 +344,7 @@ setTimeout(function(){if(!d.dataset.abertura&&d.classList.contains("com-abertura
     </div>
   </section>
 
-  <section class="sec fecho revela" id="contato">
+  <section class="sec fecho" id="contato">
     <p class="rot">Próximo passo</p>
     <h2>Quer ver como a sua clínica aparece hoje?</h2>
     <p class="lead">Mande ANÁLISE no WhatsApp. Em até 24 horas você recebe uma análise gratuita do Instagram e do atendimento da clínica.</p>

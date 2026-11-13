@@ -1,15 +1,26 @@
-import { $, $$, REDUZ, Ciclo, SAI, evento, alturaTopo, guardarHistorico, retomarDoHistorico, rolarNaHora } from "./util.js";
+import { $, $$, REDUZ, Ciclo, evento, alturaTopo, quandoVisivel, voltou } from "./util.js";
 import { pulso } from "./rios.js";
+
+// Página contínua (13/nov/2026): todas as seções aparecem rolando. O hub é um índice: cada cartão é um
+// link que desce até o seu serviço, e os braços do rio se desenham quando o hub aparece na tela.
 
 // Elementos buscados em iniciarServicos(): o módulo não toca no DOM ao ser importado.
 let hub = null, grade = null, ramos = null, cartoes = [], secoes = {};
 
-let aberto = false;
+let desenhado = false; // os braços já foram desenhados (com animação ou prontos)
 let ciclo = new Ciclo();
 
-/** Rola até el, que fica logo abaixo do topo fixo (a altura real vem do topo.js, em --topo). */
+/**
+ * Rola até el, que fica logo abaixo do topo fixo (a altura real vem do topo.js, em --topo). "instant" salta na hora
+ * sem depender de o navegador conhecer esse valor (Safari antigo): tira a rolagem suave do <html> só nesse salto.
+ */
 function irPara(el, comportamento = REDUZ ? "auto" : "smooth") {
-  window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - (alturaTopo() || 64), behavior: comportamento });
+  const top = el.getBoundingClientRect().top + window.scrollY - (alturaTopo() || 64);
+  if (comportamento !== "instant") { window.scrollTo({ top, behavior: comportamento }); return; }
+  const raiz = document.documentElement, antes = raiz.style.scrollBehavior;
+  raiz.style.scrollBehavior = "auto";
+  window.scrollTo(0, top);
+  raiz.style.scrollBehavior = antes;
 }
 
 /**
@@ -69,100 +80,15 @@ function animarRamos(meu) {
 }
 
 /**
- * M3: o hub, os serviços abertos e a rolagem ficam anotados no histórico, para reabrir tudo no mesmo
- * ponto quando a pessoa volta da privacidade (botão voltar, recarga ou "Voltar ao site").
+ * O hub apareceu na tela: os braços se desenham uma vez só. Quem voltou para a página (voltar ou
+ * recarga) já viu a animação: os braços vêm prontos. Com movimento reduzido, também.
  */
-const CHAVE = "poty-servicos", ROLAGEM = "poty-rolagem";
-const ehServico = (id) => typeof id === "string" && Object.prototype.hasOwnProperty.call(secoes, id);
-function lembrar() {
-  // Com algo aberto, quem devolve a rolagem é o restaurar(): o navegador do iPhone devolve cedo
-  // demais, quando a página ainda está curta.
-  try { history.scrollRestoration = "manual"; } catch (e) {}
-  guardarHistorico(CHAVE, { hub: aberto, abertos: Object.keys(secoes).filter((id) => secoes[id].classList.contains("aberta")) });
-}
-// O Safari limita as gravações no histórico (cerca de 100 a cada 30 s): a rolagem só é gravada
-// quando muda de verdade, e não a cada parada curta.
-let rolagemGravada = null;
-function lembrarRolagem() {
-  if (!aberto) return;
-  const y = Math.round(window.scrollY);
-  if (Math.abs(y - (rolagemGravada ?? -1e9)) < 4) return;
-  if (guardarHistorico(ROLAGEM, y)) rolagemGravada = y; // recusada: tenta de novo na próxima parada
-}
-
-/**
- * A pessoa voltou: reabre na hora o que estava aberto, com os braços já desenhados, sem animação
- * e sem contar de novo na medição, e rola até onde ela estava. Devolve true se reabriu.
- */
-function restaurar() {
-  const salvo = retomarDoHistorico(CHAVE), y = retomarDoHistorico(ROLAGEM);
-  if (!salvo || !salvo.hub) {
-    try { history.scrollRestoration = "auto"; } catch (e) {}
-    return false;
-  }
-  aberto = true;
-  document.body.classList.add("aberto");
-  for (const id of Array.isArray(salvo.abertos) ? salvo.abertos : []) {
-    if (!ehServico(id)) continue;
-    secoes[id].classList.add("aberta");
-    marcar(id, true);
-  }
-  desenharCompletos();
-  if (Number.isFinite(y)) rolagemGravada = y;
-  // Se a pessoa mexer na página antes do fim do carregamento, a rolagem dela vale.
-  let mexeu = false;
-  for (const ev of ["wheel", "touchstart", "keydown", "pointerdown"]) addEventListener(ev, () => { mexeu = true; }, { once: true, passive: true });
-  const rolar = () => { if (Number.isFinite(y) && !mexeu) rolarNaHora(y); };
-  // Rola depois que todas as partes da página iniciaram (as dobras do celular reabrem no enxuto.js).
-  queueMicrotask(rolar);
-  // As fontes e o resto da página ainda podem mexer na posição dos cartões: desenha e rola de novo no fim.
-  const deNovo = () => { if (aberto) desenharCompletos(); rolar(); };
-  document.fonts?.ready.then(deNovo);
-  if (document.readyState !== "complete") addEventListener("load", deNovo, { once: true });
-  return true;
-}
-
-/** Mostra o hub e desenha os braços. Chamar de novo só rola (se pedido). */
-export async function revelar(rolar = true) {
-  if (aberto) { if (rolar) irPara(hub); return; }
-  aberto = true;
-  const meu = ciclo = new Ciclo();
-  document.body.classList.add("aberto");
-  lembrar();
-  pulso();
-  try {
-    await meu.espera(40);
-    if (rolar) irPara(hub);
-    await meu.espera(rolar ? 480 : 60);
-    if (REDUZ) desenharCompletos(); else animarRamos(meu);
-  } catch (e) { if (e.name !== "Parou") throw e; }
-}
-
-function marcar(id, valor) {
-  const c = cartoes.find((x) => x.dataset.alvo === id);
-  c.setAttribute("aria-expanded", String(valor));
-  c.querySelector("em").firstChild.textContent = valor ? "Fechar " : "Ver como funciona ";
-}
-
-export function abrir(id, rolar = false) {
-  const s = secoes[id];
-  if (!s) return;
-  if (!aberto) revelar(false);
-  if (s.classList.contains("aberta")) { if (rolar) irPara(s); return; }
-  s.classList.add("aberta");
-  marcar(id, true);
-  lembrar();
-  evento("servico_aberto", { servico: id });
-  if (!REDUZ) s.animate([{ opacity: 0, transform: "translateY(24px)" }, { opacity: 1, transform: "none" }], { duration: 650, easing: SAI });
-  if (rolar) irPara(s);
-}
-
-export function fechar(id) {
-  const s = secoes[id];
-  if (!s) return;
-  s.classList.remove("aberta");
-  marcar(id, false);
-  lembrar();
+function acenderHub() {
+  if (desenhado) return;
+  desenhado = true;
+  document.body.classList.add("hub-visto"); // a seta do "Ver o que fazemos" para de balançar
+  if (REDUZ || voltou()) { desenharCompletos(); return; }
+  animarRamos(ciclo = new Ciclo());
 }
 
 /** Roda fn quando a abertura (html.com-abertura) já saiu da tela. */
@@ -185,14 +111,14 @@ function focarTitulo(secao) {
   h.focus({ preventScroll: true });
 }
 
-/** Leva ao alvo de um link interno, abrindo o que estiver escondido. Devolve false se não é nosso. */
+/** As seções que os links internos alcançam: o hub, os serviços, o teste e o fechamento. */
+const ehAlvo = (id) => typeof id === "string" &&
+  (id === "s-hub" || id === "s-teste" || id === "contato" || Object.prototype.hasOwnProperty.call(secoes, id));
+
+/** Leva ao alvo de um link interno, logo abaixo do topo fixo, com o foco no título. Devolve false se não é nosso. */
 function irAoAlvo(id, comportamento) {
-  const alvo = id && document.getElementById(id);
+  const alvo = ehAlvo(id) && document.getElementById(id);
   if (!alvo) return false;
-  if (id === "s-hub") revelar(false);
-  else if (secoes[id]) abrir(id);
-  else if (alvo.classList.contains("revela")) revelar(false);
-  else return false;
   focarTitulo(alvo);
   irPara(alvo, comportamento);
   return true;
@@ -204,41 +130,27 @@ export function iniciarServicos() {
   ramos = $("#ramos");
   cartoes = $$(".sv", grade);
   secoes = Object.fromEntries($$(".servico").map((s) => [s.id, s]));
-  for (const s of Object.values(secoes)) {
-    const f = document.createElement("button");
-    f.type = "button";
-    f.className = "b-lin fechar-sv";
-    f.textContent = "Fechar e voltar aos serviços";
-    f.addEventListener("click", () => {
-      fechar(s.id);
-      cartoes.find((x) => x.dataset.alvo === s.id)?.focus({ preventScroll: true });
-      irPara(hub);
-    });
-    s.append(f);
-  }
 
-  for (const c of cartoes) {
-    // Só com JS as seções nascem fechadas: o atributo vem daqui, e não do HTML (sem JS, tudo está aberto).
-    c.setAttribute("aria-expanded", "false");
-    c.addEventListener("click", () => {
-      const id = c.dataset.alvo;
-      if (secoes[id].classList.contains("aberta")) fechar(id); else abrir(id, true);
-    });
-  }
+  // Começa quando o topo do hub passa dos 90% da altura da tela: quem rola com calma já encontra os braços
+  // chegando aos cartões (no celular, o hub tem mais de 1.100 px, e 20% dele visível era tarde demais).
+  quandoVisivel(hub, acenderHub, { limiar: 0, margem: "0px 0px -10% 0px" });
 
-  $("#ver-tudo").addEventListener("click", () => {
-    Object.keys(secoes).forEach((id) => abrir(id, false));
-    irPara(secoes["s-crm"]);
-  });
-
-  // Links internos: o hub, um serviço ou uma seção que começa escondida.
-  // Cobre também os botões de WhatsApp sem número, que apontam para #contato.
+  // Links internos: o hub, um serviço, o teste ou o fechamento. Cobre também os cartões do hub, o menu
+  // e os botões de WhatsApp sem número, que apontam para #contato.
+  const contados = new Set(); // a medição conta cada serviço uma vez por visita, viesse do cartão ou do menu
   document.addEventListener("click", (e) => {
     const a = e.target.closest?.('a[href^="#"]');
     if (!a || e.defaultPrevented) return;
+    // Ctrl, Cmd, Shift ou botão do meio: o navegador abre em outra aba ou janela, como em qualquer link
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     const id = a.getAttribute("href").slice(1);
-    if (id === "s-hub") { e.preventDefault(); revelar(true); focarTitulo(hub); return; }
-    if (irAoAlvo(id)) e.preventDefault();
+    if (!irAoAlvo(id)) return;
+    e.preventDefault();
+    if (id === "s-hub") pulso(); // "Ver o que fazemos": os rios aceleram enquanto a página desce
+    if (Object.prototype.hasOwnProperty.call(secoes, id) && !contados.has(id)) {
+      contados.add(id);
+      evento("servico_aberto", { servico: id });
+    }
   });
 
   // Mede os braços de novo quando a largura muda (celular girado). Só a altura (a barra do navegador
@@ -250,45 +162,25 @@ export function iniciarServicos() {
       const agora = document.documentElement.clientWidth;
       if (agora === largura) return;
       largura = agora;
-      if (!aberto) return;
+      if (!desenhado) return;
       ciclo.parar();
       desenharCompletos();
     }, 150);
   });
 
-  // Um erro aqui (estado estranho no histórico) não pode levar o resto: a página volta a ficar
-  // fechada, como numa visita nova, e o estado guardado é apagado.
-  let reabriu = false;
-  try { reabriu = restaurar(); } catch (e) {
-    console.error("Falha ao reabrir o que estava aberto:", e);
-    aberto = false;
-    document.body.classList.remove("aberto");
-    for (const id of Object.keys(secoes)) {
-      secoes[id].classList.remove("aberta");
-      try { marcar(id, false); } catch (e3) {}
-    }
-    guardarHistorico(CHAVE, null);
-    guardarHistorico(ROLAGEM, null);
-    try { history.scrollRestoration = "auto"; } catch (e2) {}
-  }
-  // A rolagem é anotada quando para (e não a cada quadro), ao esconder a aba e ao sair da página.
-  let esperaRolagem = 0;
-  addEventListener("scroll", () => { clearTimeout(esperaRolagem); esperaRolagem = setTimeout(lembrarRolagem, 500); }, { passive: true });
-  addEventListener("pagehide", lembrarRolagem);
-  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") lembrarRolagem(); });
-
-  // Link direto (/#s-crm): abre agora e rola de novo quando a abertura e o carregamento acabarem.
-  // Quem voltou para a página já teve tudo reaberto no ponto em que estava: o hash não manda mais.
-  if (reabriu) return;
+  // Link direto (/#s-crm): leva agora e de novo quando a abertura e o carregamento acabarem, na hora (sem a
+  // rolagem suave). Quem voltou para a página (voltar ou recarga) recebe a rolagem do rolagem.js: o hash não manda.
+  if (voltou()) return;
   let id = "";
   try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { id = ""; } // hash malformado: como se não houvesse
-  const alvo = id && document.getElementById(id);
-  if (alvo && (id === "s-hub" || ehServico(id) || alvo.classList.contains("revela"))) {
-    irAoAlvo(id, "auto");
-    depoisDaAbertura(() => {
-      const rolar = () => irAoAlvo(id, "auto");
-      if (document.readyState === "complete") rolar();
-      else addEventListener("load", rolar, { once: true });
-    });
-  }
+  if (!ehAlvo(id) || !document.getElementById(id)) return;
+  irAoAlvo(id, "instant");
+  // Se a pessoa já mexeu na página antes do fim do carregamento, a rolagem dela vale: nada de puxar de volta.
+  let mexeu = false;
+  for (const ev of ["wheel", "touchstart", "keydown", "pointerdown"]) addEventListener(ev, () => { mexeu = true; }, { once: true, passive: true });
+  depoisDaAbertura(() => {
+    const rolar = () => { if (!mexeu) irAoAlvo(id, "instant"); };
+    if (document.readyState === "complete") rolar();
+    else addEventListener("load", rolar, { once: true });
+  });
 }

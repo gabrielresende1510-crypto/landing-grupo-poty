@@ -13,6 +13,7 @@ import * as exemplos from "./exemplos.js";
 import { iniciarCriativos } from "./criativos.js";
 import { iniciarTeste } from "./teste.js";
 import { iniciarEnxuto } from "./enxuto.js";
+import { iniciarRolagem } from "./rolagem.js";
 import { iniciarMovimento } from "./movimento.js";
 import { iniciarConsentimento } from "./consentimento.js";
 
@@ -32,6 +33,7 @@ seguro("video", video.iniciarVideo);
 seguro("exemplos", exemplos.iniciarExemplos);
 seguro("criativos", iniciarCriativos);
 seguro("enxuto", iniciarEnxuto);
+seguro("rolagem", iniciarRolagem); // depois das dobras: a rolagem devolvida já conta com elas fechadas
 seguro("teste", iniciarTeste);
 seguro("consentimento", iniciarConsentimento);
 // Botão "Pausar animações": cada módulo para sozinho; um erro não derruba os outros.

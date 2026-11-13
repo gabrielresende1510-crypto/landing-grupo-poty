@@ -29,15 +29,18 @@ export class Ciclo {
   }
 }
 
-/** Chama fn quando el aparece na tela. Devolve uma função que cancela a observação. */
-export function quandoVisivel(el, fn, { limiar = 0.3, umaVez = true } = {}) {
+/**
+ * Chama fn quando el aparece na tela. margem segue o rootMargin do IntersectionObserver (ex.: "0px 0px -10% 0px"
+ * só conta o que passou dos 90% da altura da tela). Devolve uma função que cancela a observação.
+ */
+export function quandoVisivel(el, fn, { limiar = 0.3, umaVez = true, margem = "0px" } = {}) {
   const obs = new IntersectionObserver((entradas) => {
     for (const e of entradas) {
       if (!e.isIntersecting) continue;
       fn(e);
       if (umaVez) obs.disconnect();
     }
-  }, { threshold: limiar });
+  }, { threshold: limiar, rootMargin: margem });
   obs.observe(el);
   return () => obs.disconnect();
 }
@@ -48,8 +51,8 @@ export function lerSessao(chave) { try { return sessionStorage.getItem(chave); }
 export function guardarSessao(chave, valor) { try { sessionStorage.setItem(chave, valor); } catch (e) {} }
 
 /**
- * O que está aberto na página fica na própria entrada do histórico (history.state). Volta junto
- * com o botão voltar e com a recarga, começa vazio num link novo e some quando a aba fecha.
+ * As dobras abertas do celular ficam na própria entrada do histórico (history.state). Voltam junto
+ * com o botão voltar e com a recarga, começam vazias num link novo e somem quando a aba fecha.
  */
 const estadoDoHistorico = () => { try { const s = history.state; return s && typeof s === "object" ? s : {}; } catch (e) { return {}; } };
 /** Devolve false se o navegador recusou a gravação (o Safari limita quantas vezes por minuto). */
@@ -69,14 +72,6 @@ export function retomarDoHistorico(chave) {
   if (voltou()) return s[chave] ?? null;
   if (s[chave] != null) guardarHistorico(chave, null);
   return null;
-}
-
-/** Rola na hora até y, mesmo com scroll-behavior:smooth no <html>. */
-export function rolarNaHora(y) {
-  const raiz = document.documentElement, antes = raiz.style.scrollBehavior;
-  raiz.style.scrollBehavior = "auto";
-  window.scrollTo(0, y);
-  raiz.style.scrollBehavior = antes;
 }
 
 /**

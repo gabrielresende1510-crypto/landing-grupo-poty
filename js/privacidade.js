@@ -4,8 +4,8 @@ import { iniciarTopo } from "./topo.js";
 import { iniciarConsentimento } from "./consentimento.js";
 
 /**
- * "Voltar ao site": quem veio da landing volta pelo histórico, e a landing reabre o que estava aberto,
- * no mesmo ponto (M3). Quem abriu a privacidade direto, ou pediu outra aba, segue o link para o começo.
+ * "Voltar ao site": quem veio da landing volta pelo histórico e cai no mesmo ponto da página, com as
+ * dobras do celular como estavam (M3). Quem abriu a privacidade direto, ou pediu outra aba, segue o link para o começo.
  */
 function iniciarVoltar() {
   let veioDoSite = false;

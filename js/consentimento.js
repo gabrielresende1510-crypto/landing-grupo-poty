@@ -121,6 +121,6 @@ export function iniciarConsentimento() {
   else if (escolha !== "recusado") mostrarQuandoLivre();
   // Voltou pela memória do navegador (bfcache), sem carregar de novo: a escolha pode ter mudado em
   // outra página (as Preferências da privacidade). Se mudou, carrega de novo para valer a escolha
-  // nova; o que estava aberto e a rolagem voltam juntos (servicos.js).
+  // nova; a rolagem e as dobras do celular voltam juntas.
   addEventListener("pageshow", (e) => { if (e.persisted && ler(CHAVE) !== atual) location.reload(); });
 }

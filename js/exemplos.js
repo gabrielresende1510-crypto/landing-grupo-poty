@@ -208,6 +208,16 @@ export function iniciarExemplos() {
   tablist.addEventListener("focusin", () => { foco = true; });
   tablist.addEventListener("focusout", (e) => { if (!tablist.contains(e.relatedTarget)) foco = false; });
   iniciado = true;
+  // Fraunces e Nunito só baixam quando o celular de exemplo chega perto da tela (secoes.css, .lp-fone.perto):
+  // com a página contínua, ele já está na página desde a carga, bem abaixo da primeira tela.
+  const perto = new IntersectionObserver((entradas) => {
+    if (!entradas.some((e) => e.isIntersecting)) return;
+    fone.classList.add("perto");
+    perto.disconnect();
+    // As duas já: o exemplo troca sozinho de tipo de clínica, e a Nunito da odontologia vem logo depois.
+    try { document.fonts?.load('600 1em "Fraunces"'); document.fonts?.load('800 1em "Nunito"'); } catch (e) {}
+  }, { rootMargin: "600px 0px" });
+  perto.observe(fone);
   if (REDUZ) return;
   new IntersectionObserver((entradas) => {
     visivel = entradas[entradas.length - 1].isIntersecting;

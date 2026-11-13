@@ -123,8 +123,14 @@ function relogio([h, txt, k]) {
   if (!REDUZ) hora.animate([{ opacity: 0.25, transform: "translateY(5px)" }, { opacity: 1, transform: "none" }], { duration: 380, easing: SAI });
 }
 
+/**
+ * Mostra ou esconde a etiqueta sem tirar o lugar dela (secoes.css, .pill.vazia): no celular ela desce para uma
+ * segunda linha do cabeçalho, e aparecer e sumir mudaria a altura da cena com o texto de baixo pulando.
+ */
+const etiqueta = (el, mostrar) => el.classList.toggle("vazia", !mostrar);
+
 function pendentes(n) {
-  pills.sem.hidden = n === 0;
+  etiqueta(pills.sem, n !== 0);
   pills.sem.textContent = n + " sem resposta";
   if (n && !REDUZ) pills.sem.animate([{ transform: "scale(1.08)" }, { transform: "none" }], { duration: 300, easing: SAI });
 }
@@ -145,7 +151,7 @@ function limpar() {
   res.sem.innerHTML = "";
   res.com.innerHTML = "";
   pendentes(0);
-  pills.com.hidden = true;
+  etiqueta(pills.com, false);
   relogio(roteiro.relogio);
 }
 
@@ -156,7 +162,7 @@ function aplicar(p) {
   if (p.relogio) relogio(p.relogio);
   if (p.texto) for (const l of lados(p)) bolha(chats[l], p.tipo, p.texto, p.hora);
   if (p.pend !== undefined) pendentes(p.pend);
-  if (p.pill) { pills.com.hidden = false; pills.com.textContent = p.pill; }
+  if (p.pill) { etiqueta(pills.com, true); pills.com.textContent = p.pill; }
   if (p.res) resultado(...p.res);
   if (p.apagar) for (const c of Object.values(chats)) [...c.children].forEach((m) => m.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 400, fill: "forwards" }));
 }
