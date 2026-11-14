@@ -217,7 +217,8 @@ export function iniciarExemplos() {
     // As duas já: o exemplo troca sozinho de tipo de clínica, e a Nunito da odontologia vem logo depois.
     try { document.fonts?.load('600 1em "Fraunces"'); document.fonts?.load('800 1em "Nunito"'); } catch (e) {}
   }, { rootMargin: "600px 0px" });
-  perto.observe(fone);
+  // A seção, e não o celular: o topo dela chega antes, e as fontes começam a baixar mais cedo.
+  perto.observe(fone.closest("section") || fone);
   if (REDUZ) return;
   new IntersectionObserver((entradas) => {
     visivel = entradas[entradas.length - 1].isIntersecting;
